@@ -1,23 +1,15 @@
-function [taskIO] = runExperiment(SubjectId)
+function [] = runExperiment()
 
+clear all; %#ok<CLALL>
+SubjectId = getSubjectId();
+for iRun = 1:5
+    if iRun > 1
+        questdlg(...
+            sprintf('Continue to run %i?',iRun),...
+            'Continue?', ...
+            'I am ready','I am ready');
+    end
+    runRun(SubjectId,iRun);
+end
 
-%%%%%%%%% this stuff is from the old set and needs to be change wont
-%%%%%%%%% currently work
-
-taskIO = setTaskIO2(SubjectId, RunId);
-
-%% Create the globals structure
-clear global;
-globals = struct;
-globals.SubjectId = SubjectId;
-
-%% Set the globals
-globals = setGlobals(globals, taskIO);
-
-%% Set-up PsychToolbox
-setUp(globals.window);
-
-setUp(window);
-
-
-
+return

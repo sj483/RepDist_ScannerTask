@@ -75,7 +75,7 @@ function [taskIO] = runRun(SubjectId, RunId)
 
     %TRIAL LOOP
     for trial = 1:numel(taskIO)
-        if strcmp(taskIO(trial).Category,"count")
+        if strcmp(taskIO(trial).category,"count")
             
             %Set trial charecteristics 
             startNum = taskIO(trial).Image_Id;
@@ -99,7 +99,7 @@ function [taskIO] = runRun(SubjectId, RunId)
             %r is the number of assigned to the texture they chose rather 
             % than the actual number shown in the texture so needs to be converted back
             r = find(globals.numTextures==rTexture); 
-            taskIO(trial).Response = r;
+            taskIO(trial).response = r;
             Screen('CloseAll')
            
         else
@@ -112,7 +112,7 @@ function [taskIO] = runRun(SubjectId, RunId)
             imgDur = 2;
             %DISPLAY & SAVE
             [r,globals] = showImg(trial,imgDur,globals); 
-            taskIO(trial).Response = r;
+            taskIO(trial).response = r;
         end   
 
         try
