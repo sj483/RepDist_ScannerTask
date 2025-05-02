@@ -1,21 +1,19 @@
 function [r, globals] = requestResponse(duration, globals)
-allowableKeys = globals.acceptKey;
-
+allowableKeys = globals.upKey;
 tStart = globals.t;
-
 tTimeOut = (tStart + duration);
 r = NaN;
+globals.respT = NaN;
 now = GetSecs();
 while now < tTimeOut
     [keyIds, keyTime] = liKeyWait(allowableKeys, tTimeOut);
-    globals.t = keyTime;
     
-    if ismember(globals.acceptKey,keyIds) && isnan(r)
+    
+    if ismember(globals.upKey,keyIds) && isnan(r)
         %liSendTrig(1, globals);
         r = 1;
+        globals.respT = keyTime;
     end
     now = GetSecs();
 end
-
-%globals.t = tTimeOut;
 return

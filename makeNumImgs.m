@@ -1,0 +1,38 @@
+
+
+for ii = 0:100
+    textX = int2str(ii);
+
+    % Create a new figure
+    fig = figure;
+
+    % Set the axis limits to 830x830
+    axis([0 830 0 830]);
+
+    % Set the aspect ratio to ensure equal lengths
+    pbaspect([1 1 1]);
+    set(gca, 'Color', 'k'); % Set background to black
+    set(gca, 'XColor', 'none', 'YColor', 'none'); % Remove axis lines
+
+    % Expand axis to fill figure
+    set(gca, 'Position', [0 0 1 1]);
+
+    % Set figure size to be square
+    fig.Units = 'pixels';
+    fig.Position(3:4) = [850 850]; % Make it nicely square (larger than 830 to allow room)
+
+    % Set paper mode to auto so it saves as it appears
+    fig.PaperPositionMode = 'auto';
+    fig.InvertHardcopy = 'off';
+
+
+    % Add text
+    text(415, 415, textX, 'Color', 'w', 'FontSize', 200, ...
+        'HorizontalAlignment', 'center', 'VerticalAlignment', 'middle');
+
+    % Save as JPEG or PNG
+    name = sprintf('%03d%i', ii);
+    print(fig, [name, '.png'], '-dpng', '-r300');  % Save as PNG at 300 DPI
+
+end
+

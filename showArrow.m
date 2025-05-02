@@ -10,8 +10,5 @@ Screen('Flip', globals.window, globals.t);
 % Update globals.t so the blank screen is shown for the intended duration
 waitframes = round(dur / globals.ifi);
 globals.t = globals.t + (waitframes * globals.ifi);
-
-Screen('Close', texture)
-
 return
 

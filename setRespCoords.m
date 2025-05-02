@@ -5,8 +5,8 @@ function [xyEdgesResp, xyCentreResp] = setRespCoords(nX, nY, cy)
 
 numRows = 1;
 numPerRow = 3;
-imgWidth = round((14/128)*nX);    % values for spark array were imgWidth: 14, outBlankX: 10, outBlankY: 6 all out of 64
-outBlankX = round((20/128)*nX);
+imgWidth = round((10/128)*nX);    % values for spark array were imgWidth: 14, outBlankX: 10, outBlankY: 6 all out of 64
+outBlankX = round((20/128)*nX); %change back to 20/128
 %outBlankY = round((57/128)*nY);
 
 %% Calculate the space between images in the x and y directions

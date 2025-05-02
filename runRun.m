@@ -1,4 +1,4 @@
-function [taskIO] = runRun(SubjectId, RunId)
+function [taskIO] = runRun(subjectId,runId,perm,startNums)
     
     %% Clear the screen
     sca;
@@ -13,14 +13,15 @@ function [taskIO] = runRun(SubjectId, RunId)
 
     dateTimeStr = sprintf('%04d%02d%02dT%02d%02d%02d',round(clock)); %#ok<CLOCK>
     targetFn = sprintf('.%sOutputs%s%s_R%i_%s.mat',...
-    filesep, filesep, SubjectId, RunId, dateTimeStr);
+    filesep, filesep, subjectId, runId, dateTimeStr);
 
   
 
     %% Create the globals structure
     clear global;
     globals = struct;
-    globals.SubjectId = SubjectId;
+    globals.subjectId = subjectId;
+    globals.runId = runId; 
    
 
     % Last argument below:
@@ -28,22 +29,24 @@ function [taskIO] = runRun(SubjectId, RunId)
      % ... 2: Skip the sync-test
     Screen('Preference','SkipSyncTests', 1);
 
-    %get image permutations from opseq
-    runOrderStrt = setRunOrder;
+    %get appropriate run order from opseq
+    opseq = load('opseq.mat');
+    fieldname = sprintf('%s%i','Run',runId);
+    runOrder = opseq.allSeqs.(fieldname);
+    startNums = startNums.(fieldname);
 
     %% Set the globals
-    globals = setGlobals(globals, runOrderStrt);
+    globals = setGlobals(globals,perm);
     
     %% Set-up PsychToolbox
     setUp(globals.window);
-   % HideCursor();
+   % HideCursor();  %PUT BACK IN WHEN FINISHED DEVELOPING
 
     % build TaskIO
-    [taskIO] = setTaskIO2(SubjectId, RunId, runOrderStrt,globals);
+    taskIO = setTaskIO(runOrder, globals, startNums);
      
-
-    
-    %% Set IO port
+   
+    % Set IO port
     globals.sendTriggers = true;
     try
         [globals.portObj,globals.portAddress] = setIOPort();
@@ -72,47 +75,42 @@ function [taskIO] = runRun(SubjectId, RunId)
 
     %% Wait for Scanner
     [tScan0,globals] = waitForScanner(globals);
-
+    
     %TRIAL LOOP
     for trial = 1:numel(taskIO)
-        if strcmp(taskIO(trial).category,"count")
+        if strcmp(taskIO(trial).type,"countingTrial")
             
-            %Set trial charecteristics 
-            startNum = taskIO(trial).Image_Id;
+            %Display the number from which to count down from
+            startNum = taskIO(trial).startNum;
             globals = showNum(startNum, 1, globals);
             taskIO(trial).tShow = globals.t;
-            durArrow = taskIO(trial).isiLength; %this is the duration of arrow presentation
+            %Display arrow for duration of counting period
+            durArrow = taskIO(trial).isiLength; 
             globals = showArrow(durArrow,globals);
             taskIO(trial).tShow = globals.t;
             %options is a mini struct of stuff needed for the counting
             %response page 
-            options.startPos = taskIO(trial).startPos;
-            options.correctResp = taskIO(trial).correctResp;
-            options.opt1 = taskIO(trial).opt1;
-            options.opt2 = taskIO(trial).opt2;
-            % below is the duration of response page which is 
-            % = 15sec(total 'trial' length) -1sec(in which number is shown) -Xsec(counting time while arrow is shown)
-            options.dur = 14 - durArrow; 
+            options.scrlStart = taskIO(trial).scrlStart;
+            options.dur = 2; % response time always 2 seconds 
            
-            %DISPLAY & SAVE
-            [rTexture, globals] = showCountOpts(options,globals);
-            %r is the number of assigned to the texture they chose rather 
-            % than the actual number shown in the texture so needs to be converted back
-            r = find(globals.numTextures==rTexture); 
+            %Display scrolling answer page
+            [r, globals] = showScroll(options,globals);
             taskIO(trial).response = r;
-            Screen('CloseAll')
-           
+          
         else
-            %DISPLAY & SAVE
+            %Display ISI
             globals = showBlank(0.5, globals); 
             % globals.t is the time at which the last screen finished showing
             % i.e time which new screen should start
             taskIO(trial).tShow = globals.t; 
 
+            %Set trial charecteristics 
             imgDur = 2;
-            %DISPLAY & SAVE
-            [r,globals] = showImg(trial,imgDur,globals); 
+            imgTexture = taskIO(trial).textureId;
+            %Display image stimulus
+            [r,globals] = showImg(imgTexture,imgDur,globals); 
             taskIO(trial).response = r;
+            taskIO(trial).respT = globals.respT;
         end   
 
         try
@@ -128,6 +126,7 @@ function [taskIO] = runRun(SubjectId, RunId)
             error('Terminated by user.');
         end
     end
+   Screen('CloseAll')
 
    return 
 

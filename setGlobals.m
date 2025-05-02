@@ -1,4 +1,4 @@
-function [globals] = setGlobals(globals, runOrderStrt)
+function [globals] = setGlobals(globals,perms)
 
 % Set the unit length of each IO pulse
 globals.portUnitLength = 8/1000;
@@ -6,15 +6,15 @@ globals.portUnitLength = 8/1000;
 % Keyboard settings
 KbName('UnifyKeyNames');
 globals.escapeKey = KbName('ESCAPE');
-globals.scrollKey = KbName('b');
-globals.acceptKey = KbName('y');
+globals.upKey = KbName('b');
+globals.downKey = KbName('y');
 globals.sKey = KbName('s');
 
 %% Set monoschrome values
 [globals.white, globals.black] = setMonochromes();
 
 %% Open the PsychToolbox window
-[globals.window, windowRect] = PsychImaging('OpenWindow', 0, globals.black); % !have changed the screen to use but change this back in future!
+[globals.window, windowRect] = PsychImaging('OpenWindow', 2, globals.black); % !have changed the screen to use but change this back in future!
 
 
 %% Set the xy co-ords
@@ -32,38 +32,52 @@ globals.xyEdgesCues = CenterRectOnPoint(...
     [0 0 cueImgWidth cueImgWidth],...
     globals.xyCentreScrn(1), globals.xyCentreScrn(2));
 
-% 'numAr' i.e. the numbers and the down arrow
-numArImgWidth = 100;
-globals.xyEdgesNumAr = CenterRectOnPoint(...
+% 'numAr' is used by both the central number in the counting task and the down arrow
+numArImgWidth = nX/5;
+globals.xyEdgesNumAr = (CenterRectOnPoint(...
     [0 0 numArImgWidth numArImgWidth],...
-    globals.xyCentreScrn(1), globals.xyCentreScrn(2));
+    globals.xyCentreScrn(1), globals.xyCentreScrn(2)))';
 
-% Resp
+% this sets to location of flanking numbers on the scroll page
 [globals.xyEdgesResp, globals.xyCentreResp] = setRespCoords(nX, nY,cy);
 
 %% Set the fixation cross
 %globals.cross = setCross();
 
 
-%% Making the stimuli imgs into textures 
-    %read in img files into an array in the run order (dictated by opseq)
-    globals.imgTextures = cell(numel(runOrderStrt),1); 
-    for ii = 1:numel(runOrderStrt)
-        imgFile = imread(runOrderStrt(ii).fPath);
-        globals.imgTextures{ii} = Screen('MakeTexture', globals.window, imgFile);
-    end 
-
-%% MAKE NUMBER TEXTURES - refactor this too ?
-nOfNum = 17; % this is the number of options of counting start numbers 
-cRange = 1:17; % the actual selection of number textures we'll need is from 2-17 but the 1 is made just to make indexing the rest more logical
-globals.numTextures = nan(nOfNum,1); 
-
-for ii = cRange
-    nText = num2str(ii);
-    globals.numTextures(ii) = makeText(nText,globals);   
+%extract the permutations for that subject into one long list
+globals.imgPerms = nan(54,1);
+for cc = 1:9
+    cat = perms.catPerm(cc);
+    for ii = 1:6
+        imgN = perms.imgPerm{cc}(ii);
+        globals.imgPerms(ii+(cc-1)*6,1) = imgN + (cat-1)*6 ;
+    end
 end
 
-aText = "arrow";
+%% Making the stimuli imgs into textures
+categories = ["Ani", "Art", "Fac", "Foo", "Ifa", "Lin","Obj", "Pla", "Spa"];
+globals.imgTextures = nan(54,1);
+for tt = 1:54
+    catIdx = ceil(tt/6);
+    codeId = tt - (catIdx-1)*6 -1;  %images are zero ordered
+    fPath = fullfile(cd, 'Imgs', ...
+        sprintf('%s%i%s', categories(catIdx), codeId, '.png'));
+    imgFile = imread(fPath);
+    globals.imgTextures(tt,1) = Screen('MakeTexture', globals.window, imgFile);
+end
+
+%% MAKE NUMBER TEXTURES 
+nOfNums = 100; 
+globals.numTextures = nan(nOfNums,1); 
+
+% number textures are positioned in an array so that 
+% their index = their numerical value
+for nn = 1:nOfNums
+    globals.numTextures(nn) = makeText(nn,globals);   
+end
+
+aText = 'arrow';
 globals.arrow = makeText(aText, globals);
 
 
@@ -77,5 +91,6 @@ globals.penWidthPixels = 6;
 
 % Get an initial screen flip for timing
 globals.t = Screen('Flip', globals.window);
+globals.respT = NaN;
 
 return

@@ -1,0 +1,95 @@
+function [taskIO] = setTaskIO(runOrder, globals, startNums)
+%imgs ids refers to the following:
+% Ani = [1:6];
+% Art = [7:12];
+% Fac = [13:18];
+% Foo = [19:24];  
+% Ifa = [25:32];
+% Lin = [33:38];
+% Obj = [39:42];
+% Pla = [43:48];
+% Spa = [49:54];
+%countTrialId = 55;
+disp(globals)
+
+%imgCode refers to the id within the category e.g. sea slug is 5 of 'Ani'
+
+%for testing 
+if strcmp(globals.subjectId,'fakeSubId')
+    subjectId = 'abc123';
+end    
+
+randomSeed = hex2dec(subjectId) + globals.runId*100;
+rng(randomSeed,"twister"); %only thing this would be good for is reconstituting the exact timings on the counting task
+
+
+%convert the runOrder from base ids into the 'meaningful' image ids using
+%that subject's specific permutations 
+permdRunOrder = arrayfun(@(x) globals.imgPerms(x),runOrder);
+
+%add in the counting trials (run order id is 55)
+permdRunOrder = [permdRunOrder(1:54);55;permdRunOrder(55:108);55;permdRunOrder(109:162);...
+    55;permdRunOrder(163:216);55;permdRunOrder(217:270)];
+
+
+%the category labels below align with the naming of the image files - will
+%break if they are changed!!
+% categories = ["Ani", "Art", "Fac", "Foo", "Ifa", "Lin","Obj", "Pla", "Spa"];
+categories = {"Ani"; "Art"; "Fac"; "Foo"; "Ifa"; "Lin";"Obj"; "Pla"; "Spa"};
+
+%% Preallocate the TaskIO structure
+nReps = 5;
+numTrials = (54*nReps) + (nReps-1); % num images + num counting task(present + respond)
+
+taskIO = repmat((struct(...
+    'type', [], ...
+    'imageCode', NaN, ...
+    'isiLength', NaN, ...
+    'tShow', NaN,...
+    'startNum', NaN,...
+    'scrlStart', NaN,...
+    'correctResp', NaN,... %THIS WILL BE FOR ODDBALL TRIALS
+    'response', NaN, .... % this is for both oddball & counting
+    'textureId', [])), ...
+    numTrials,1);
+
+%%
+repCounter = 0;
+for iTrial = 1:numTrials
+       
+    if permdRunOrder(iTrial) == 55
+        repCounter = repCounter+1;
+       %Counting trial
+        taskIO(iTrial).type = 'countingTrial';
+        %CALCULATE TRIAL PARAMS   
+        startNum = startNums(repCounter);     
+        durArrow = (rand(1)*4)+4; %uniform distribution of 4-8 seconds
+        scrlStart = round(startNum - (3/2 * durArrow) + normrnd(0,3)); %where the answer scroller starts at
+
+        %ASSIGN TRIAL PARAMS
+        % assigning the number from which to start counting back
+        taskIO(iTrial).startNum = startNum;
+        % assigning the time for which the arrow will be shown after the 
+        % number is displayed in the count task
+        taskIO(iTrial).isiLength = durArrow;
+        taskIO(iTrial).scrlStart = scrlStart;
+    else 
+        %fill in options for normal picture trials
+        %CALCULATE TRIAL PARAMS
+        imgId = permdRunOrder(iTrial);
+        catIdx = int32(ceil(imgId/6));
+        codeId = int32(imgId - (catIdx-1)*6 - 1);
+        % disp(iTrial)
+        % disp(categories) % debugging
+        % disp(catIdx)  % debugging
+        % whos catIdx  % debugging
+        name = sprintf('%s%i', categories{catIdx,1}, codeId);
+        %ASSIGN TRIAL PARAMS
+        taskIO(iTrial).type = 'stim'; %when we add in oddballs this will be a conditional for them
+        taskIO(iTrial).imageCode = name;
+        taskIO(iTrial).textureId = globals.imgTextures(imgId);
+        taskIO(iTrial).isiLength = 0.5;
+    end
+ end
+
+return
