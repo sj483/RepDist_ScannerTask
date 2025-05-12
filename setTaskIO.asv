@@ -10,6 +10,7 @@ function [taskIO] = setTaskIO(runOrder, globals, startNums)
 % Pla = [43:48];
 % Spa = [49:54];
 %countTrialId = 55;
+disp(globals)
 
 %imgCode refers to the id within the category e.g. sea slug is 5 of 'Ani'
 
@@ -24,9 +25,11 @@ rng(randomSeed,"twister"); %only thing this would be good for is reconstituting 
 
 %convert the runOrder from base ids into the 'meaningful' image ids using
 %that subject's specific permutations 
-permdRunOrder = getPmdRunOrd(runOrder,globals);
-%add in counting trials which I have coded as 55
+permdRunOrder = arrayfun(@(x) globals.imgPerms(x),runOrder);
+
 permdRunOrder = insertCountTrials(permdRunOrder);
+
+
 
 
 %the category labels below align with the naming of the image files - will

@@ -33,6 +33,9 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
     opseq = load('opseq.mat');
     fieldname = sprintf('%s%i','Run',runId);
     runOrder = opseq.allSeqs.(fieldname);
+
+    %get the number which the participant will be counting down from 
+    %in the counting trials of this run
     startNums = startNums.(fieldname);
 
     %% Set the globals
@@ -96,7 +99,10 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
             %Display scrolling answer page
             [r, globals] = showScroll(options,globals);
             taskIO(trial).response = r;
-          
+        elseif strcmp(taskIO(trial).type,"null")
+            %Display Null trial (blank screen for 2.5 seconds)
+            globals = showBlank(2.5, globals);
+            taskIO(trial).tShow = globals.t; 
         else
             %Display ISI
             globals = showBlank(0.5, globals); 
@@ -107,8 +113,10 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
             %Set trial charecteristics 
             imgDur = 2;
             imgTexture = taskIO(trial).textureId;
+            trigId = taskIO(trial).trigId;
             %Display image stimulus
             [r,globals] = showImg(imgTexture,imgDur,globals); 
+            liSendTrig(trigId + 8,globals); % we add 8 because...??
             taskIO(trial).response = r;
             taskIO(trial).respT = globals.respT;
         end   

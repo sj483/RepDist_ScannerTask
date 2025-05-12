@@ -11,11 +11,12 @@ globals.downKey = KbName('y');
 globals.sKey = KbName('s');
 
 %% Set monoschrome values
-[globals.white, globals.black] = setMonochromes();
+[globals.white, globals.black, globals.grey] = setMonochromes();
 
 %% Open the PsychToolbox window
-[globals.window, windowRect] = PsychImaging('OpenWindow', 2, globals.black); % !have changed the screen to use but change this back in future!
-
+[globals.window, windowRect] = PsychImaging('OpenWindow', 2, globals.grey); % !have changed the screen to use but change this back in future!
+% Enable alpha blending for transparency
+Screen('BlendFunction', globals.window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 
 %% Set the xy co-ords
 % Get the size of the on screen window
@@ -48,12 +49,13 @@ globals.xyEdgesNumAr = (CenterRectOnPoint(...
 %extract the permutations for that subject into one long list
 globals.imgPerms = nan(54,1);
 for cc = 1:9
-    cat = perms.catPerm(cc);
+    catg = perms.catPerm(cc);
     for ii = 1:6
         imgN = perms.imgPerm{cc}(ii);
-        globals.imgPerms(ii+(cc-1)*6,1) = imgN + (cat-1)*6 ;
+        globals.imgPerms(ii+(cc-1)*6,1) = imgN + (catg-1)*6 ;
     end
 end
+
 
 %% Making the stimuli imgs into textures
 categories = ["Ani", "Art", "Fac", "Foo", "Ifa", "Lin","Obj", "Pla", "Spa"];
@@ -63,7 +65,8 @@ for tt = 1:54
     codeId = tt - (catIdx-1)*6 -1;  %images are zero ordered
     fPath = fullfile(cd, 'Imgs', ...
         sprintf('%s%i%s', categories(catIdx), codeId, '.png'));
-    imgFile = imread(fPath);
+    [imgFile,~,alpha] = imread(fPath);
+    imgFile = cat(3, imgFile, alpha);
     globals.imgTextures(tt,1) = Screen('MakeTexture', globals.window, imgFile);
 end
 

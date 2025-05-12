@@ -1,7 +1,7 @@
 function [globals] = showBlank(duration,globals)
 
 % Draw a blank rectangle
-Screen('FillRect', globals.window, globals.black, globals.xyEdgesScrn);
+Screen('FillRect', globals.window, globals.grey, globals.xyEdgesScrn);
 
 % Flip the screen
 Screen('Flip', globals.window, globals.t);

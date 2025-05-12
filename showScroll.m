@@ -1,13 +1,5 @@
 function [r,globals] = showScroll(options,globals)
 
-%impossible options are 2/3s of number line so
-%smallest startnum that makes sense is 7 (lowest dur is 4 seconds, 1 count of 3 every 2 seconds
-% and don't want zero as an option because it makes indexing textures complicated)
-%so say we have 16 number options, the range would be 7-22  
-% so the first impossible answer (for that range as a whole) is 23, so if
-% we want 2/3rds of numbers to be impossible lets say the number line
-% ranges from 1:66.
-
 numberLine = 1:100;
 
 allowableKeys = [globals.upKey, globals.downKey];
