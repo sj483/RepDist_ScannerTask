@@ -26,7 +26,11 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
 
     % Last argument below:
     % ... 0: Don't skip the sync-test
-     % ... 2: Skip the sync-test
+    % ... 2: Skip the sync-test
+    %.....1:This will shorten the  maximum duration of the sync tests to 3
+    % seconds worst case and it will
+    % force Psychtoolbox to continue with execution of your script, even if the
+    % sync tests failed completely
     Screen('Preference','SkipSyncTests', 1);
 
     %get appropriate run order from opseq

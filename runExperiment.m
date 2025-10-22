@@ -7,7 +7,12 @@ subjectId = getSubjectId();
 %set once at the beginning of the experiment 
 perms = load("perms.mat");
 perms = perms.perms; % unpack variable so not in extra layer of struct
-perms = perms.(subjectId); %extract that subject's specific permutations 
+try
+    perms = perms.(subjectId); %extract that subject's specific permutations 
+catch
+    errordlg(sprintf('Task Permutations for this SubjectId\n could not be found'),'File Error');
+    error('Task Permutations for this SubjectId\ncould not be found','double');
+end 
 
 %divide the set of starting numbers for the counting task into 5 runs 
 allStartNums = [61;64;65;67;68;71;74;77;85;88;91;92;94;95;97;98];

@@ -11,7 +11,7 @@ for ii = 0:100
 
     % Set the aspect ratio to ensure equal lengths
     pbaspect([1 1 1]);
-    set(gca, 'Color', [0.5,0.5,0.5]); % Set background to black
+    set(gca, 'Color', [0.5,0.5,0.5]); % Set background to grey
     set(gca, 'XColor', 'none', 'YColor', 'none'); % Remove axis lines
 
     % Expand axis to fill figure
