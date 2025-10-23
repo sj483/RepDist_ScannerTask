@@ -97,10 +97,10 @@ for iTrial = 1:numTrials
         %ASSIGN TRIAL PARAMS
         taskIO(iTrial).imageCode = name;
         %check OB status
-        obStatus = obPerm(repCounter,imgId); %is a 1 for OB or 0 for not
-        taskIO(iTrial).trigId = getTrigId(imgId,obStatus);
-        if obStatus
-            taskIO(iTrial).type = 'OddBall';
+        isTarget = obPerm(repCounter,imgId); %is a 1 for OB or 0 for not
+        taskIO(iTrial).trigId = getTrigId(imgId,isTarget);
+        if isTarget
+            taskIO(iTrial).type = 'oddBall';
             taskIO(iTrial).textureId = globals.obTextures(imgId);
             % 64 is the 7th binary column
         else

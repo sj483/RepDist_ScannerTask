@@ -6,8 +6,8 @@ globals.portUnitLength = 8/1000;
 % Keyboard settings
 KbName('UnifyKeyNames');
 globals.escapeKey = KbName('ESCAPE');
-globals.upKey = KbName('b');
-globals.downKey = KbName('y');
+globals.upKey = KbName('y');
+globals.downKey = KbName('b');
 globals.sKey = KbName('s');
 
 %% Set monoschrome values

@@ -7,8 +7,6 @@ globals.respT = NaN;
 now = GetSecs();
 while now < tTimeOut
     [keyIds, keyTime] = liKeyWait(allowableKeys, tTimeOut);
-    
-    
     if ismember(globals.upKey,keyIds) && isnan(r)
         %liSendTrig(1, globals);
         r = 1;

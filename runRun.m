@@ -65,6 +65,8 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
         switch choice
             case 'Exit execution'
                 return
+            case 'Let''s go!'
+                imgDur = 2;
         end
     catch
         choice = questdlg(...
@@ -76,6 +78,7 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
                 return
             case 'Continue; I am testing'
                 globals.sendTriggers = false;
+                imgDur = 0.5;
         end
     end
 
@@ -107,7 +110,7 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
             %Display Null trial (blank screen for 2.5 seconds)
             globals = showBlank(2.5, globals);
             taskIO(trial).tShow = globals.t; 
-        else
+        else %this is both target/non target trials
             %Display ISI
             globals = showBlank(0.5, globals); 
             % globals.t is the time at which the last screen finished showing
@@ -115,15 +118,29 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
             taskIO(trial).tShow = globals.t; 
 
             %Set trial charecteristics 
-            imgDur = 2;
+            %imgDur = 2; unless you're testing...
             imgTexture = taskIO(trial).textureId;
             trigId = taskIO(trial).trigId;
             %Display image stimulus
             [r,globals] = showImg(imgTexture,imgDur,globals); 
-            liSendTrig(trigId + 8,globals); % we add 8 because...??
+            liSendTrig(trigId + 8,globals); 
             taskIO(trial).response = r;
             taskIO(trial).respT = globals.respT;
-        end   
+            if strcmp(taskIO(trial).type, 'oddBall')
+                % Oddball trial
+                if isnan(r)
+                    taskIO(trial).correctResp = 0;
+                else
+                    taskIO(trial).correctResp = 1;
+                end
+            else
+                % Non-oddball trial
+                if ~isnan(r)
+                    taskIO(trial).correctResp = 0;
+                end
+                % Otherwise leave it as NaN (default)
+            end
+        end
 
         try
             save(targetFn, "taskIO", "tScan0", "globals");

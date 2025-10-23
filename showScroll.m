@@ -9,7 +9,7 @@ numShowing = options.scrlStart;
 
 tStart = drawScroll(numShowing, [1,1,1].*globals.white, globals);
 
-tTimeOut = (tStart + options.dur); 
+tTimeOut = (tStart + options.dur);
 r = NaN;
 now = GetSecs();
 tLastValidScroll = -Inf;
@@ -34,7 +34,13 @@ while now < tTimeOut
             tLastValidScroll = keyTime;
         end
     end
-    r = numShowing;
+    if isnan(keyIds)
+        %allows us to dinstinguish whether they actually responded
+
+        r = numShowing+ 1i;
+    else
+        r = numShowing;
+    end
     now = GetSecs();
 end
 
