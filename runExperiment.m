@@ -5,8 +5,8 @@ subjectId = getSubjectId();
 
 %image permutations for each participant do not change between runs so are
 %set once at the beginning of the experiment 
-perms = load("perms.mat");
-perms = perms.perms; % unpack variable so not in extra layer of struct
+strct = load("taskPerms.mat");
+perms = strct.perms; % unpack variable so not in extra layer of struct
 try
     perms = perms.(subjectId); %extract that subject's specific permutations 
 catch

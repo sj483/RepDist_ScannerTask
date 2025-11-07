@@ -13,13 +13,11 @@ function [taskIO] = setTaskIO(runOrder, globals, startNums)
 
 %imgCode refers to the id within the category e.g. sea slug is 5 of 'Ani'
 
-%for testing 
-if strcmp(globals.subjectId,'fakeSubId')
-    subjectId = 'abc123';
-end    
-
-randomSeed = hex2dec(subjectId) + globals.runId*100;
-rng(randomSeed,"twister"); %only thing this would be good for is reconstituting the exact timings on the counting task
+%take the number element of the subjectId as the seed
+randomSeed = str2double(globals.subjectId(end-1:end)) + globals.runId*100;
+rng(randomSeed,"twister"); 
+%only thing this would be neccersary for is 
+% reconstituting the exact timings on the counting task
 
 
 %convert the runOrder from base ids into the 'meaningful' image ids using
