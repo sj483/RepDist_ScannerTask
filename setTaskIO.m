@@ -30,7 +30,8 @@ permdRunOrder = insertCountTrials(permdRunOrder);
 strct = load("obPerm.mat");
 obPerm = strct.M;
 %last current row needed (e.g. row 10 for run 2)
-lcRow = globals.runId*5; 
+nReps = 5;
+lcRow = globals.runId*nReps; 
 %all rows needed from obPerm, for this run (current)
 cRows = (lcRow-4):lcRow; % (nReps = 4)
 obPerm = obPerm(cRows,:);
@@ -41,7 +42,6 @@ obPerm = obPerm(cRows,:);
 categories = {"Ani"; "Art"; "Fac"; "Foo"; "Lin";"Obj"; "Pla"; "Spa"; "Tex"};
 
 %% Preallocate the TaskIO structure
-nReps = 5;
 numTrials = (54*nReps) + (nReps-1); % num images + num counting task(present + respond)
 
 taskIO = repmat((struct(...
@@ -51,8 +51,8 @@ taskIO = repmat((struct(...
     'tShow', NaN,...
     'startNum', NaN,...
     'scrlStart', NaN,...
-    'correctResp', NaN,... %THIS WILL BE FOR ODDBALL TRIALS
-    'response', NaN, .... % this is for both oddball & counting
+    'correctResp', NaN,... %This is for oddball vs stim trials 
+    'response', NaN, ...   %This is for all trial types accept null
     'textureId', [], ...
     'trigId',[])), ...
     numTrials,1);

@@ -24,7 +24,7 @@ for irun = 1:4
     sNIdx = sNIdx(~ismember(sNIdx, cidxs));
 end 
 
-for iRun = 1:5
+for iRun = 1:4
     if iRun > 1
         questdlg(...
             sprintf('Continue to run %i?',iRun),...
