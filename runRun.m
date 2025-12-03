@@ -144,7 +144,7 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums,skip)
         try
             save(targetFn, "taskIO", "tScan0", "globals");
         catch
-            warning('Data not saved successfully on trial %i', iT);
+            warning('Data not saved successfully on trial %i', trial);
         end
 
         %% Escape
