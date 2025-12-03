@@ -1,4 +1,4 @@
-function [taskIO] = runRun(subjectId,runId,perm,startNums)
+function [taskIO] = runRun(subjectId,runId,perm,startNums,skip)
     
     %% Clear the screen
     sca;
@@ -22,6 +22,7 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
     globals = struct;
     globals.subjectId = subjectId;
     globals.runId = runId; 
+    globals.skip = skip;
    
 
     % Last argument below:
@@ -31,12 +32,12 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
     % seconds worst case and it will
     % force Psychtoolbox to continue with execution of your script, even if the
     % sync tests failed completely
-    Screen('Preference','SkipSyncTests', 1);
+    % Screen('Preference','SkipSyncTests', 1);
 
-    %get appropriate run order from opseq
-    opseq = load('opseq.mat');
+    %get current run's order from seq struct
+    seq = load('RunSequence.mat');
     fieldname = sprintf('%s%i','Run',runId);
-    runOrder = opseq.allSeqs.(fieldname);
+    runOrder = seq.Seq.(fieldname);
 
     %get the number which the participant will be counting down from 
     %in the counting trials of this run
@@ -45,9 +46,6 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
     %% Set the globals
     globals = setGlobals(globals,perm);
     
-    %% Set-up PsychToolbox
-    setUp(globals.window);
-   % HideCursor();  %PUT BACK IN WHEN FINISHED DEVELOPING
 
     % build TaskIO
     taskIO = setTaskIO(runOrder, globals, startNums);
@@ -67,6 +65,7 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
                 return
             case 'Let''s go!'
                 imgDur = 2;
+                HideCursor();
         end
     catch
         choice = questdlg(...
@@ -78,7 +77,7 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums)
                 return
             case 'Continue; I am testing'
                 globals.sendTriggers = false;
-                imgDur = 0.5;
+                imgDur = 0.5; 
         end
     end
 

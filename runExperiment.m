@@ -24,6 +24,16 @@ for irun = 1:4
     sNIdx = sNIdx(~ismember(sNIdx, cidxs));
 end 
 
+answer = questdlg(...
+            sprintf('Would you like to skip the sync test?'),...
+            'Sync test', 'No', 'Yes I am testing','Yes I am testing');
+switch answer
+    case 'Yes I am testing'
+        skip = 2;
+    case 'No'
+        skip=0;
+end
+
 for iRun = 1:4
     if iRun > 1
         questdlg(...
@@ -31,7 +41,7 @@ for iRun = 1:4
             'Continue?', ...
             'I am ready','I am ready');
     end
-    runRun(subjectId,iRun,perms,startNums);
+    runRun(subjectId,iRun,perms,startNums,skip);
 end
 
 return

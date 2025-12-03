@@ -10,20 +10,15 @@ globals.upKey = KbName('y');
 globals.downKey = KbName('b');
 globals.sKey = KbName('s');
 
-%% Set monoschrome values
-[globals.white, globals.black, globals.grey] = setMonochromes();
-
-%% Open the PsychToolbox window
-[globals.window, windowRect] = PsychImaging('OpenWindow', 2, globals.grey); % !have changed the screen to use but change this back in future!
-% Enable alpha blending for transparency
-Screen('BlendFunction', globals.window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+%This changes priority level of script, sets sync test setting and enables alpha blending for transparency
+globals = setUp(globals);
 
 %% Set the xy co-ords
 % Get the size of the on screen window
 [nX, nY] = Screen('WindowSize', globals.window);
 
 % Get the centre coordinates of the window
-[cx,cy] = RectCenter(windowRect);
+[cx,cy] = RectCenter(globals.windowRect);
 globals.xyCentreScrn = [cx;cy];
 globals.xyEdgesScrn = Screen('Rect', globals.window);
 
