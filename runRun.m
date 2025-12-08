@@ -1,4 +1,4 @@
-function [taskIO] = runRun(subjectId,runId,perm,startNums,skip)
+function [cancel] = runRun(subjectId,runId,perm,startNums,skip)
     
     %% Clear the screen
     sca;
@@ -24,16 +24,6 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums,skip)
     globals.runId = runId; 
     globals.skip = skip;
    
-
-    % Last argument below:
-    % ... 0: Don't skip the sync-test
-    % ... 2: Skip the sync-test
-    %.....1:This will shorten the  maximum duration of the sync tests to 3
-    % seconds worst case and it will
-    % force Psychtoolbox to continue with execution of your script, even if the
-    % sync tests failed completely
-    % Screen('Preference','SkipSyncTests', 1);
-
     %get current run's order from seq struct
     seq = load('RunSequence.mat');
     fieldname = sprintf('%s%i','Run',runId);
@@ -62,10 +52,17 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums,skip)
             'Exit execution','Let''s go!','Exit execution');
         switch choice
             case 'Exit execution'
+                Screen('CloseAll');
+                cancel = true;
                 return
             case 'Let''s go!'
                 imgDur = 2;
                 HideCursor();
+                cancel = false;
+            otherwise %putting this in in case the diaglog box gets closed
+                Screen('CloseAll'); 
+                cancel = true;
+                error('Please choose a valid option');
         end
     catch
         choice = questdlg(...
@@ -74,10 +71,17 @@ function [taskIO] = runRun(subjectId,runId,perm,startNums,skip)
             'Exit execution','Continue; I am testing','Exit execution');
         switch choice
             case 'Exit execution'
+                Screen('CloseAll');
+                cancel = true;
                 return
             case 'Continue; I am testing'
                 globals.sendTriggers = false;
                 imgDur = 0.5; 
+                cancel = false;
+            otherwise %putting this in in case the diaglog box gets closed
+                Screen('CloseAll');
+                cancel = true;
+                error('Please choose a valid option');
         end
     end
 

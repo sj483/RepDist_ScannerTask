@@ -15,7 +15,7 @@ globals = setUp(globals);
 
 %% Set the xy co-ords
 % Get the size of the on screen window
-[nX, nY] = Screen('WindowSize', globals.window);
+nX = Screen('WindowSize', globals.window);
 
 % Get the centre coordinates of the window
 [cx,cy] = RectCenter(globals.windowRect);
@@ -33,13 +33,13 @@ numArImgWidth = nX/5;
 globals.xyEdgesNumAr = (CenterRectOnPoint(...
     [0 0 numArImgWidth numArImgWidth],...
     globals.xyCentreScrn(1), globals.xyCentreScrn(2)))';
+%make frame used for central number in scrolling page
+globals.xyEdgesNAfrm = nan(4,1);
+globals.xyEdgesNAfrm(1:2,1) = globals.xyEdgesNumAr(1:2,1) - 20;
+globals.xyEdgesNAfrm(3:4,1) = globals.xyEdgesNumAr(3:4,1) + 20;
 
-% this sets to location of flanking numbers on the scroll page
-[globals.xyEdgesResp, globals.xyCentreResp] = setRespCoords(nX, nY,cy);
-
-%% Set the fixation cross
-%globals.cross = setCross();
-
+% this sets to location of flanking numbers and their frames on the scroll page
+[globals.xyEdgesResp, globals.xyEdgesFrm, globals.xyCentreResp] = setRespCoords(nX,cy);
 
 %extract the permutations for that subject into one long list
 globals.imgPerms = nan(54,1);

@@ -2,6 +2,9 @@ function [subjectId] = getSubjectId()
 
 % Get Subject number
 userInput = inputdlg({'Enter SubjectId (string):'},'SubjectId',1);
+if isempty(userInput)
+     error('Please provide a subjectId');
+end 
 subjectId = str2double(userInput{1});
 %format the raw number from user (can have leading zeros or not)
 subjectId = sprintf('Subject_%02d',subjectId);

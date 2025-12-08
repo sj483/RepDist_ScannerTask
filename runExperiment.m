@@ -32,6 +32,8 @@ switch answer
         skip = 2;
     case 'No'
         skip=0;
+    otherwise 
+        error('Please choose a valid option')
 end
 
 for iRun = 1:4
@@ -41,7 +43,13 @@ for iRun = 1:4
             'Continue?', ...
             'I am ready','I am ready');
     end
-    runRun(subjectId,iRun,perms,startNums,skip);
+    cancel = runRun(subjectId,iRun,perms,startNums,skip);
+    if cancel
+    %This is so user doesn't get stuck in a loop if once of the
+    %dialog boxes inside gets closed/cancelled
+        error('User terminated script!')
+        return 
+    end 
 end
 
 return

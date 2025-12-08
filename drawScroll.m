@@ -6,11 +6,13 @@ upprTxtr = globals.numTextures(numShowing+1);
 
 textures = [lowrTxtr;midlTxtr;upprTxtr];
 
-flankColour = [0.25,0.25,0.25].*globals.white;
+flankColour = [0.3,0.3,0.3].*globals.white;
 frameColours = [flankColour;cursorColour;flankColour];
 txtrCoords = {globals.xyEdgesResp(:,1); globals.xyEdgesNumAr;...
     globals.xyEdgesResp(:,3)};
 
+frmCoords = {globals.xyEdgesFrm(:,1); globals.xyEdgesNAfrm;...
+    globals.xyEdgesFrm(:,3)};
 
 for iTexture= 1:3
     % Draw textures to backbuffer
@@ -23,7 +25,7 @@ for iTexture= 1:3
     Screen('FrameRect',...
     globals.window,...
     frameColours(iTexture),...
-    txtrCoords{iTexture,1},...
+    frmCoords{iTexture,1},...
     globals.penWidthPixels)
 end
 

@@ -1,17 +1,10 @@
-function [xyEdgesResp, xyCentreResp] = setRespCoords(nX, nY, cy)
+function [xyEdgesResp, xyEdgesFrm, xyCentreResp] = setRespCoords(nX, cy)
 
-%nX is width of screen and nY is height of screen, and cy is the centre of
+%nX is width of screen, and cy is the centre of
 %the screen height
 
-numRows = 1;
-numPerRow = 3;
-imgWidth = round((10/128)*nX);    % values for spark array were imgWidth: 14, outBlankX: 10, outBlankY: 6 all out of 64
-outBlankX = round((20/128)*nX); %change back to 20/128
-%outBlankY = round((57/128)*nY);
-
-%% Calculate the space between images in the x and y directions
-%inBlankX = (nX - numPerRow*imgWidth - outBlankX*2) / (numPerRow - 1);
-%inBlankY = (nY - numRows*imgWidth - outBlankY*2) / (numRows - 1);
+imgWidth = round((10/128)*nX);    
+outBlankX = round((20/128)*nX); 
 
 %% Calculate the x and y co-ords of the centres of each response textures
 xCents =  linspace(...
@@ -33,6 +26,12 @@ for iImg = 1:3
     xyEdgesResp(:,iImg) = CenterRectOnPoint(...
         [0 0 imgWidth imgWidth],...
         xyCentreResp(1, iImg), xyCentreResp(2, iImg));
+end
+
+xyEdgesFrm = nan(4,3);
+for jj = 1:3
+    xyEdgesFrm(1:2,jj) = xyEdgesResp(1:2,jj) - 20;
+    xyEdgesFrm(3:4,jj) = xyEdgesResp(3:4,jj) + 20;
 end
 
 return
