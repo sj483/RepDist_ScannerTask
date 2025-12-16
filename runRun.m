@@ -1,10 +1,19 @@
-function [cancel] = runRun(subjectId,runId,perm,startNums,skip)
+function [cancel] = runRun(subjectId,runId,skip)
     
     %% Clear the screen
     sca;
     close all;
     PsychDefaultSetup(2);
 
+    %image permutations for the subject  
+    strct = load("taskPerms.mat");
+    taskPerms = strct.perms; % unpack variable so not in extra layer of struct
+    try
+        taskPerms = taskPerms.(subjectId); %extract that subject's specific permutations
+    catch
+        errordlg(sprintf('Task Permutations for this SubjectId\n could not be found'),'File Error');
+        error('Task Permutations for this SubjectId\ncould not be found','double');
+    end
 
     % setUp for saving the output
     if ~exist(sprintf('.%sOutputs',filesep),'dir')
@@ -28,13 +37,14 @@ function [cancel] = runRun(subjectId,runId,perm,startNums,skip)
     seq = load('RunSequence.mat');
     fieldname = sprintf('%s%i','Run',runId);
     runOrder = seq.Seq.(fieldname);
-
-    %get the number which the participant will be counting down from 
-    %in the counting trials of this run
-    startNums = startNums.(fieldname);
+    
+    %get current run's starting nums for the counting trials of this run
+    countPerms =  load('countPerms.mat');
+    countPerms = countPerms.countPerms.(subjectId);
+    startNums = countPerms.(fieldname);
 
     %% Set the globals
-    globals = setGlobals(globals,perm);
+    globals = setGlobals(globals,taskPerms);
     
 
     % build TaskIO

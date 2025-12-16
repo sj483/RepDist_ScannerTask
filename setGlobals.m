@@ -1,4 +1,4 @@
-function [globals] = setGlobals(globals,perms)
+function [globals] = setGlobals(globals,taskPerms)
 
 % Set the unit length of each IO pulse
 globals.portUnitLength = 8/1000;
@@ -44,9 +44,9 @@ globals.xyEdgesNAfrm(3:4,1) = globals.xyEdgesNumAr(3:4,1) + 20;
 %extract the permutations for that subject into one long list
 globals.imgPerms = nan(54,1);
 for cc = 1:9
-    catg = perms.catPerm(cc);
+    catg = taskPerms.catPerm(cc);
     for ii = 1:6
-        imgN = perms.imgPerm{cc}(ii);
+        imgN = taskPerms.imgPerm{cc}(ii);
         globals.imgPerms(ii+(cc-1)*6,1) = imgN + (catg-1)*6 ;
     end
 end

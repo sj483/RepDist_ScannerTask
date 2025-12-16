@@ -16,6 +16,8 @@ function [taskIO] = setTaskIO(runOrder, globals, startNums)
 %only thing this would be neccersary for is 
 % reconstituting the exact timings on the counting task
 %take the number element of the subjectId as the seed
+%we're taking the last 2 characters of subjectId because the rest of the string 
+%is the word 'subject' i.e. the same for everyone
 randomSeed = str2double(globals.subjectId(end-1:end)) + globals.runId*100;
 rng(randomSeed,"twister"); 
 
@@ -87,10 +89,6 @@ for iTrial = 1:numTrials
         imgId = permdRunOrder(iTrial);
         catIdx = int32(ceil(imgId/6));
         codeId = int32(imgId - (catIdx-1)*6 - 1);
-        % disp(iTrial)
-        % disp(categories) % debugging
-        % disp(catIdx)  % debugging
-        % whos catIdx  % debugging
         name = sprintf('%s%i', categories{catIdx,1}, codeId);
         %ASSIGN TRIAL PARAMS
         taskIO(iTrial).imageCode = name;
