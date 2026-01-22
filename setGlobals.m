@@ -53,17 +53,17 @@ end
 
 
 %% Making the stimuli imgs into textures
-categories = ["Ani", "Art", "Fac", "Foo", "Lin","Obj", "Pla", "Spa","Tex"];
+categories = {'Ani', 'Art', 'Fac', 'Foo', 'Lin','Obj', 'Pla', 'Spa','Tex'};
 globals.imgTextures = nan(54,1);
 for tt = 1:54
     catIdx = ceil(tt/6);
     codeId = tt - (catIdx-1)*6 -1;  %images are zero ordered
     %normal image version and then oddBall
-    version = ["Imgs","Oddballs"];
-    field = ["imgTextures", "obTextures"];
+    version = {'Stimuli';'Oddballs'};
+    field = {'imgTextures'; 'obTextures'};
     for vv = 1:2
-    fPath = fullfile(pwd, version(vv), ...
-        sprintf('%s%i%s', categories(catIdx), codeId, '.png'));
+    fPath = fullfile(pwd, 'Imgs', version{vv}, ...
+        sprintf('%s%i%s', categories{catIdx}, codeId, '.png'));
     [imgFile,~,alpha] = imread(fPath);
     imgFile = cat(3, imgFile, alpha);
     globals.(field(vv))(tt,1) = Screen('MakeTexture', globals.window, imgFile);

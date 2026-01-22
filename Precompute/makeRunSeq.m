@@ -1,5 +1,3 @@
-
-
 %Seq contains a field per run e.g. Seq.Run1, and each field contains...
 % a [57*5,1] vector
 
@@ -42,8 +40,3 @@ Seq.(sprintf('Run%i',ii)) = cRun;
 end
 
 save('RunSequence.mat','Seq');
-
-
-
-
-

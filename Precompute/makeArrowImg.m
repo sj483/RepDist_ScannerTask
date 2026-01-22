@@ -1,8 +1,9 @@
+function [] = makeArrowImg()
 
 % Create a new figure
-fig = figure;
+fh = figure;
 
-% Set the axis limits to 830x830
+% Set the axis limits to 200 x 200
 axis([0 200 0 200]);
 
 % Set the aspect ratio to ensure equal lengths
@@ -14,17 +15,19 @@ set(gca, 'XColor', 'none', 'YColor', 'none'); % Remove axis lines
 set(gca, 'Position', [0 0 1 1]);
 
 % Set figure size to be square
-fig.Units = 'pixels';
-fig.Position(3:4) = [200 200]; % Make it nicely square (larger than 830 to allow room)
+fh.Units = 'pixels';
+fh.Position(3:4) = [200 200]; % Make it nicely square (larger than 830 to allow room)
 
-fig.Units = 'inches';
-fig.Position = [0 0 2 2];  % 2 in × 2 in
-fig.PaperUnits = 'inches';
-fig.PaperPosition = [0 0 2 2];
+fh.Units = 'inches';
+fh.Position = [0 0 2 2];  % 2 in × 2 in
+fh.PaperUnits = 'inches';
+fh.PaperPosition = [0 0 2 2];
 % Set paper mode to auto so it saves as it appears
-fig.PaperPositionMode = 'auto';
-fig.InvertHardcopy = 'off';
+fh.PaperPositionMode = 'auto';
+fh.InvertHardcopy = 'off';
 
 
 text(100, 100, '$\downarrow$','Interpreter','latex', 'Color', 'w', 'FontSize', 100, 'HorizontalAlignment', 'center', 'VerticalAlignment', 'middle');
-print(fig, 'arrow.png', '-dpng', '-r100');  % Save as PNG at 300 DPI
+print(fh, 'arrow.png', '-dpng', '-r100');  % Save as PNG at 300 DPI
+
+return

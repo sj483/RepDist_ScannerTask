@@ -1,5 +1,5 @@
 function [txtTexture] = makeText(textX, globals)
-cd("nums")
+cd(['Imgs',filesep,'CountTask']);
 if strcmp(textX,"arrow")
     imgName = textX;
 else
@@ -7,5 +7,5 @@ else
 end
 textImg = imread([imgName,'.png']);
 txtTexture = Screen('MakeTexture', globals.window, textImg);
-cd('..')
+cd(['..',filesep,'..']);
 return
