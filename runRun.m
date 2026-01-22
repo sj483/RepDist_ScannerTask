@@ -3,17 +3,6 @@ function [cancel] = runRun(subjectId,runId,skip)
     %% Clear the screen
     sca;
     close all;
-    PsychDefaultSetup(2);
-
-    %image permutations for the subject  
-    strct = load("taskPerms.mat");
-    taskPerms = strct.perms; % unpack variable so not in extra layer of struct
-    try
-        taskPerms = taskPerms.(subjectId); %extract that subject's specific permutations
-    catch
-        errordlg(sprintf('Task Permutations for this SubjectId\n could not be found'),'File Error');
-        error('Task Permutations for this SubjectId\ncould not be found','double');
-    end
 
     % setUp for saving the output
     if ~exist(sprintf('.%sOutputs',filesep),'dir')
@@ -44,7 +33,7 @@ function [cancel] = runRun(subjectId,runId,skip)
     startNums = countPerms.(fieldname);
 
     %% Set the globals
-    globals = setGlobals(globals,taskPerms);
+    globals = setGlobals(globals);
     
 
     % build TaskIO

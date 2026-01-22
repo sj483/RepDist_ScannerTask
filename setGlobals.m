@@ -1,100 +1,109 @@
-function [globals] = setGlobals(globals,taskPerms)
+function [globals] = setGlobals(globals)
 
-% Set the unit length of each IO pulse
+%% Set the unit length of each IO pulse
 globals.portUnitLength = 8/1000;
 
-% Keyboard settings
+%% Keyboard settings
 KbName('UnifyKeyNames');
 globals.escapeKey = KbName('ESCAPE');
 globals.upKey = KbName('y');
 globals.downKey = KbName('b');
 globals.sKey = KbName('s');
 
-%This changes priority level of script, sets sync test setting and enables alpha blending for transparency
-globals = setUp(globals);
+%% Set monoschrome values
+[globals.white, globals.grey, globals.black] = setMonochromes();
+
+%% Open the PsychToolbox window
+[globals.window, globals.windowRect] = PsychImaging(...
+    'OpenWindow', 0, globals.grey);
+
+%% Load the stimulus textures
+nImgs = 54;
+stimTypes = {'Typicals';'Oddballs'};
+cats = {'Ani', 'Art', 'Fac', 'Foo', 'Lin','Obj', 'Pla', 'Spa','Tex'};
+for iStimType = 1:numel(stimTypes)
+    cStimType = stimTypes{iStimType};
+    globals.textures.(cStimType) = nan(nImgs,1);
+    for ii = 1:nImgs
+        catIdx = floor((ii-1)/6);
+        subIdx = mod(ii-1,6);
+        fn = fullfile(pwd, 'Imgs', cStimType, ...
+            sprintf('%s%i.png', cats{catIdx}, subIdx));
+        [Img,~,Alpha] = imread(fn);
+        Img = cat(3, Img, Alpha);
+        globals.textures.(cStimType)(ii) = Screen('MakeTexture', ...
+            globals.window, Img);
+    end
+end
+
+%% Load the number textures
+globals.textures.numbers = nan(100,1);
+for ii = 1:numel(globals.textures.numbers)
+    num = ii - 1;
+    fn = fullfile(pwd, 'Imgs', 'CountTask', ...
+        sprintf('%03d.png', num));
+    Img = imread(fn);
+    globals.textures.numbers(ii) = Screen('MakeTexture', ...
+        globals.window, Img);
+end
+
+%% Load the arrow texture
+fn = fullfile(pwd, 'Imgs', 'CountTask', 'Arrow.png');
+Img = imread(fn);
+globals.textures.arrow = Screen('MakeTexture', globals.window, Img);
 
 %% Set the xy co-ords
-% Get the size of the on screen window
-nX = Screen('WindowSize', globals.window);
+% Get the screen dimensions
+[nX, nY] = Screen('WindowSize', globals.window);
+globals.dimScrn = [nX, nY];
 
-% Get the centre coordinates of the window
-[cx,cy] = RectCenter(globals.windowRect);
-globals.xyCentreScrn = [cx;cy];
+% Get the centre + edge coordinates for the window
+[x,y] = RectCenter(globals.windowRect);
+globals.xyCentreScrn = [x;y];
 globals.xyEdgesScrn = Screen('Rect', globals.window);
 
-% 'Cues' i.e. the images from the different categories
-cueImgWidth = 830;
-globals.xyEdgesCues = CenterRectOnPoint(...
-    [0 0 cueImgWidth cueImgWidth],...
+% Get the edge coordinates for the stimuli
+stimWidth = 830 -1;
+globals.xyEdgesStim = CenterRectOnPoint(...
+    [0 0 stimWidth stimWidth],...
     globals.xyCentreScrn(1), globals.xyCentreScrn(2));
 
-% 'numAr' is used by both the central number in the counting task and the down arrow
-numArImgWidth = nX/5;
-globals.xyEdgesNumAr = (CenterRectOnPoint(...
-    [0 0 numArImgWidth numArImgWidth],...
-    globals.xyCentreScrn(1), globals.xyCentreScrn(2)))';
-%make frame used for central number in scrolling page
-globals.xyEdgesNAfrm = nan(4,1);
-globals.xyEdgesNAfrm(1:2,1) = globals.xyEdgesNumAr(1:2,1) - 20;
-globals.xyEdgesNAfrm(3:4,1) = globals.xyEdgesNumAr(3:4,1) + 20;
+% Get the edge coordinates for centrally presented numbers
+numWidth = 200 -1;
+globals.xyEdgesNumMid = CenterRectOnPoint(...
+    [0 0 numWidth numWidth],...
+    globals.xyCentreScrn(1), globals.xyCentreScrn(2));
 
-% this sets to location of flanking numbers and their frames on the scroll page
-[globals.xyEdgesResp, globals.xyEdgesFrm, globals.xyCentreResp] = setRespCoords(nX,cy);
+% Get the edge coordinates for a centrally presented number frame
+globals.xyEdgesFrameMid = globals.xyEdgesNumMid + [-20,-20,+20,+20];
 
-%extract the permutations for that subject into one long list
-globals.imgPerms = nan(54,1);
-for cc = 1:9
-    catg = taskPerms.catPerm(cc);
-    for ii = 1:6
-        imgN = taskPerms.imgPerm{cc}(ii);
-        globals.imgPerms(ii+(cc-1)*6,1) = imgN + (catg-1)*6 ;
-    end
+% Get the edge coordinates for the flanking numbers
+numWidth = 150 -1;
+globals.xyEdgesNumLeft = CenterRectOnPoint(...
+    [0 0 numWidth numWidth],...
+    globals.xyCentreScrn(1) - 300, globals.xyCentreScrn(2));
+globals.xyEdgesNumRight = CenterRectOnPoint(...
+    [0 0 numWidth numWidth],...
+    globals.xyCentreScrn(1) + 300, globals.xyCentreScrn(2));
+
+%% extract the permutations for that subject into one long list
+imgPerms = load('imgPerms.mat');
+imgPerms = imgPerms.perms;
+try
+    imgPerm = imgPerms.(globals.subjectId);
+catch
+    error(['The requested subjectId (%s) is not associated with an ',...
+        'image permutation in "taskPerms.mat"'],globals.subjectId);
 end
+globals.imgPerm = imgPerm;
 
-
-%% Making the stimuli imgs into textures
-categories = {'Ani', 'Art', 'Fac', 'Foo', 'Lin','Obj', 'Pla', 'Spa','Tex'};
-globals.imgTextures = nan(54,1);
-for tt = 1:54
-    catIdx = ceil(tt/6);
-    codeId = tt - (catIdx-1)*6 -1;  %images are zero ordered
-    %normal image version and then oddBall
-    version = {'Stimuli';'Oddballs'};
-    field = {'imgTextures'; 'obTextures'};
-    for vv = 1:2
-    fPath = fullfile(pwd, 'Imgs', version{vv}, ...
-        sprintf('%s%i%s', categories{catIdx}, codeId, '.png'));
-    [imgFile,~,alpha] = imread(fPath);
-    imgFile = cat(3, imgFile, alpha);
-    globals.(field(vv))(tt,1) = Screen('MakeTexture', globals.window, imgFile);
-    end
-end
-
-
-%% MAKE NUMBER TEXTURES 
-nOfNums = 100; 
-globals.numTextures = nan(nOfNums,1); 
-
-% number textures are positioned in an array so that 
-% their index = their numerical value
-for nn = 1:nOfNums
-    globals.numTextures(nn) = makeText(nn,globals);   
-end
-
-aText = 'arrow';
-globals.arrow = makeText(aText, globals);
-
-
-%% Miscellaneous setting
-
-% Set the inter-frame interval
+%% Set the inter-frame interval
 globals.ifi = Screen('GetFlipInterval', globals.window);
 
-% Pen width for drawing the frames
+%% Pen width for drawing the frames
 globals.penWidthPixels = 6;
 
-% Get an initial screen flip for timing
+%% Get an initial screen flip for timing
 globals.t = Screen('Flip', globals.window);
-globals.respT = NaN;
 
 return

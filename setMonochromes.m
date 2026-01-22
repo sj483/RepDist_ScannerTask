@@ -1,7 +1,7 @@
-function [white, black, grey] = setMonochromes()
+function [white, grey, black] = setMonochromes()
 screens = Screen('Screens');
 screenNumber = max(screens);
 white = WhiteIndex(screenNumber);
 black = BlackIndex(screenNumber);
-grey = white/2;
+grey = (white + black) / 2;
 return 
