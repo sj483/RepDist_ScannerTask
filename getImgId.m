@@ -3,7 +3,7 @@ function [imgId,isTarget] = getImgId(trigId)
 
 % Check inputs
 if ~isnumeric(trigId)
-    error('Bad inputs;');
+    error('Bad inputs');
 end
 
 % Cast to cell array

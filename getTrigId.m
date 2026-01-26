@@ -1,7 +1,8 @@
 function [trigId] = getTrigId(imgId,isTarget)
+
 % Check inputs
 if ~isnumeric(imgId) || ~(isnumeric(isTarget) || islogical(isTarget))
-    error('Bad inputs;');
+    error('Bad inputs');
 end
 if any(size(imgId)~=size(isTarget)) && (numel(isTarget)>1)
     error('Dimensions of input are not compatible;');
@@ -31,6 +32,3 @@ trigId = cellfun(@(s1,s2,s3){[s1,s2,s3]},isTarget,catId,imgNum);
 % Convert binary to double 
 trigId = cellfun(@bin2dec,trigId);
 return
-
-
-

@@ -1,4 +1,4 @@
-function [cancel] = runRun(subjectId,runId,skip)
+function [cancel] = runRun(subjectId,runId)
     
     %% Clear the screen
     sca;
@@ -19,8 +19,7 @@ function [cancel] = runRun(subjectId,runId,skip)
     clear global;
     globals = struct;
     globals.subjectId = subjectId;
-    globals.runId = runId; 
-    globals.skip = skip;
+    globals.runId = runId;
    
     %get current run's order from seq struct
     seq = load('RunSequence.mat');

@@ -4,24 +4,24 @@
 seed = 42;
 rng(seed, 'twister');
 
-for ii=1:4
-    repSize = 54;
+    imgsPerRep = 54;
+    trialsPerRep = imgsPerRep + 3;
     nReps = 5;
+for ii=1:4
     %how big the rep will be after adding 3 nans
-    newRepSize = repSize + 3;
 
     for rr = 1:nReps
         % Extract current repeat from whole run's run order
-        rep = randperm(54)';
+        rep = randperm(imgsPerRep)';
 
         % Choose 3 unique random NaN insert positions
-        insertIdx = sort(randperm(newRepSize, 3));
+        insertIdx = sort(randperm(trialsPerRep, 3));
 
         % Preallocate Rep with NaNs
-        repWithNaNs = NaN(newRepSize, 1);
+        repWithNaNs = NaN(trialsPerRep, 1);
 
         % Fill positions that are NOT in insertIdx
-        toCopy = true(newRepSize, 1);
+        toCopy = true(trialsPerRep, 1);
         toCopy(insertIdx) = false;
 
         % Fill the non-NaN positions
