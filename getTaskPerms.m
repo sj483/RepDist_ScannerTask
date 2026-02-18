@@ -1,15 +1,23 @@
-rng(1729);
+function [ImgPerms,SlotPerms] = getTaskPerms()
 
+if exist('TaskPerms.mat','file')
+    X = load('TaskPerms.mat');
+    ImgPerms = X.ImgPerms;
+    SlotPerms = X.SlotPerms;
+    return
+end
+
+rng(1729);
 nImgs = 54;
 nSubjects = 40;
 nRuns = 4;
 nRepsPerRun = 5;
 nNullsPerRep = 3;
 countStats = [
-    86	62	91	76	67
-    71	82	66	95	69
-    93	64	85	78	72
-    96	61	89	79	68];
+    86	62	91	76  Inf
+    71	82	66	95	Inf
+    93	64	85	78	Inf
+    96	61	89	79	Inf];
 
 % Image permulations (1-ordered, unique for each subject)
 ImgPerms = nan(nImgs,nSubjects);
@@ -19,9 +27,9 @@ for iSubject = 1:nSubjects
     ImgPerms(:,iSubject) = reshape(cell2mat(P),nImgs,1);
 end
 
-% Trial permulations (1-ordered + NaNs, common across all subjects)
-dTriPerm = [(nImgs+nNullsPerRep)*nRepsPerRun+(nRepsPerRun-1),nRuns];
-TriPerm = nan(dTriPerm);
+% Slot permulations (1-ordered + NaNs, common across all subjects)
+dTrialPerms = [(nImgs+nNullsPerRep)*nRepsPerRun+(nRepsPerRun-1),nRuns];
+SlotPerms = nan(dTrialPerms);
 for iRun = 1:nRuns
     P = repmat([nan(nNullsPerRep,1);(1:nImgs)'],1,nRepsPerRun);
     P = mat2cell(P,nImgs+nNullsPerRep,ones(1,nRepsPerRun));
@@ -31,6 +39,8 @@ for iRun = 1:nRuns
     P = [P;-countStats(iRun,:)]; % Add counting task
     P = P(:);
     P = P(1:end-1); % Remove final counting task
-    TriPerm(:,iRun) = P;
+    SlotPerms(:,iRun) = P;
     clear P;
 end
+
+return
