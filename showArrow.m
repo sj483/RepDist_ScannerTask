@@ -1,14 +1,13 @@
-function [globals] = showArrow(dur,globals)
+function [globals] = showArrow(duration,globals)
 
-texture = globals.arrow;
-
-Screen('DrawTexture', globals.window, texture, [], globals.xyEdgesNumAr);
+% Draw the texture
+Screen('DrawTexture', globals.window, globals.arrow, [], ...
+    globals.xyEdgesNumAr);
 
 % Flip the screen
 Screen('Flip', globals.window, globals.t);
 
 % Update globals.t so the blank screen is shown for the intended duration
-waitframes = round(dur / globals.ifi);
+waitframes = round(duration / globals.ifi);
 globals.t = globals.t + (waitframes * globals.ifi);
 return
-

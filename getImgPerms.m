@@ -17,5 +17,4 @@ for iSubject = 1:nSubjects
         num2cell(6*(randperm(9)-1)),'UniformOutput',false);
     ImgPerms(:,iSubject) = reshape(cell2mat(P),nImgs,1);
 end
-
 return

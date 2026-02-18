@@ -30,6 +30,7 @@ TaskIO.trigId = nan(nSlots,1);
 TaskIO.stimulus = cell(nSlots,1);
 TaskIO.catId = nan(nSlots,1); % 0-ordered
 TaskIO.imgId = nan(nSlots,1); % 0-ordered
+TaskIO.textureIdx = nan(nSlots,1);
 TaskIO.response = nan(nSlots,1);
 TaskIO.tShow = nan(nSlots,1);
 TaskIO.tResponse = nan(nSlots,1);
@@ -59,10 +60,14 @@ for iSlot = 1:nSlots
             TaskIO.trialType{iSlot} = 'Typical';
             TaskIO.trigId(iSlot) = StimTable.trigId_Typical(slotId);
             TaskIO.stimulus{iSlot} = StimTable.imgPath_Typical(slotId);
+            TaskIO.textureIdx(iSlot) = ...
+                StimTable.textureIdx_Typical(slotId);
         else
             TaskIO.trialType{iSlot} = 'Oddball';
             TaskIO.trigId(iSlot) = StimTable.trigId_Oddball(slotId);
             TaskIO.stimulus{iSlot} = StimTable.imgPath_Oddball(slotId);
+            TaskIO.textureIdx(iSlot) = ...
+                StimTable.textureIdx_Oddball(slotId);
         end
     end
 end

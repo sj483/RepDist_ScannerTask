@@ -16,68 +16,11 @@ saveFn = sprintf('.%sOutputs%s%s_R%i_%s.mat',...
 %% Create the globals structure
 globals = setGlobals(subjectId,runId);
 
-%get current run's order from seq struct
-seq = load('RunSequence.mat');
-fieldname = sprintf('%s%i','Run',runId);
-runOrder = seq.Seq.(fieldname);
+%% Set up IO port
+globals = setIOPort(globals);
 
-%get current run's starting nums for the counting trials of this run
-countPerms =  load('countPerms.mat');
-countPerms = countPerms.countPerms.(subjectId);
-startNums = countPerms.(fieldname);
-
-%% Set the globals
-
-
-
-% build TaskIO
-taskIO = setTaskIO(runOrder, globals, startNums);
-
-
-% Set IO port
-globals.sendTriggers = true;
-try
-    [globals.portObj,globals.portAddress] = setIOPort();
-    io64(globals.portObj,globals.portAddress,0);
-    choice = questdlg(...
-        sprintf('Successfully setup IO port.%cWould you like to continue?',10),...
-        'Continue?', ...
-        'Exit execution','Let''s go!','Exit execution');
-    switch choice
-        case 'Exit execution'
-            Screen('CloseAll');
-            stoppedEarly = true;
-            return
-        case 'Let''s go!'
-            imgDur = 2;
-            HideCursor();
-            stoppedEarly = false;
-        otherwise %putting this in in case the diaglog box gets closed
-            Screen('CloseAll');
-            stoppedEarly = true;
-            error('Please choose a valid option');
-    end
-catch
-    choice = questdlg(...
-        sprintf('Failed to setup IO port.%cWhat would you like to do?',10),...
-        'IO port not working', ...
-        'Exit execution','Continue; I am testing','Exit execution');
-    switch choice
-        case 'Exit execution'
-            Screen('CloseAll');
-            stoppedEarly = true;
-            return
-        case 'Continue; I am testing'
-            globals.sendTriggers = false;
-            imgDur = 0.5;
-            stoppedEarly = false;
-        otherwise %putting this in in case the diaglog box gets closed
-            Screen('CloseAll');
-            stoppedEarly = true;
-            error('Please choose a valid option');
-    end
-end
-
+%% Create TaskIO
+TaskIO = makeTaskIO(globals);
 
 %% Wait for Scanner
 [tScan0,globals] = waitForScanner(globals);
@@ -151,6 +94,8 @@ for trial = 1:numel(taskIO)
         error('Terminated by user.');
     end
 end
-Screen('CloseAll')
+Screen('CloseAll');
 
+% Extract stoppedEarly
+stoppedEarly = globals.stoppedEarly;
 return

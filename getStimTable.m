@@ -34,6 +34,8 @@ StimTable.trigId_Typical = nan(nStim,1);
 StimTable.trigId_Oddball = nan(nStim,1);
 StimTable.imgPath_Typical = cell(nStim,1);
 StimTable.imgPath_Oddball = cell(nStim,1);
+StimTable.textureIdx_Typical = nan(nStim,1);
+StimTable.textureIdx_Oddball = nan(nStim,1);
 
 % Loop through to populate the variables
 iIn = 0;

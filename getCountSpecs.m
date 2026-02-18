@@ -21,5 +21,4 @@ CountDurs = rand(d).*4 + 4;
 
 % Scroll starts
 ScrollStarts = round( countStats -((3/2).*CountDurs) +normrnd(0,3,d) );
-
 return
