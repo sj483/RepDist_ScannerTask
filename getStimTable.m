@@ -1,58 +1,70 @@
-function [stimTable] = getStimTable(imgPerm)
+function [StimTable] = getStimTable(imgPerm)
 
-% Make sure imgPerm is valid! (1-ordered + group contiguous)
-if nargin < 1
-    % Generate a valid imgPerm if testing (this is subject specific)
-    imgPerm = cellfun(@(iC) iC + (randperm(6)'),...
-        num2cell(6*(randperm(9)-1)),'UniformOutput',false);
-    imgPerm = reshape(cell2mat(imgPerm),54,1);
-else
-    M = kron(eye(9),ones(1,6)./6);
-    a = M*imgPerm;
-    fail = sum((sort(a)-(3.5:6:51.5)').^2) > 1e-16;
-    if fail
-        error('Invalid slotPerm input.');
+% Ensure imgPerm is valid (1-ordered + group contiguous)
+if testImgPerm(imgPerm)
+    error('Invalid imgPerm.');
+end
+
+% Set a sorted list of category names
+catNames = {
+    'Ani'; % 0
+    'Art'; % 1
+    'Fac'; % 2
+    'Foo'; % 3
+    'Lin'; % 4
+    'Obj'; % 5
+    'Pla'; % 6
+    'Spa'; % 7
+    'Tex'; % 8
+    };
+
+% Number of images per category
+nImgsPerCat = 6;
+
+% Size of StimTable
+nStim = numel(catNames)*nImgsPerCat;
+
+% Preallocate the variables
+StimTable = struct;
+StimTable.catName = cell(nStim,1);
+StimTable.imgName = cell(nStim,1);
+StimTable.catId = nan(nStim,1); % 0-ordered
+StimTable.imgId = nan(nStim,1); % 0-ordered
+StimTable.trigId_Typical = nan(nStim,1);
+StimTable.trigId_Oddball = nan(nStim,1);
+StimTable.imgPath_Typical = cell(nStim,1);
+StimTable.imgPath_Oddball = cell(nStim,1);
+
+% Loop through to populate the variables
+iIn = 0;
+for iCat = 1:numel(catNames)
+    catName = catNames{iCat};
+    for iImg = 1:nImgsPerCat
+        iIn = iIn + 1;
+        imgName = sprintf('%s%i',catName,iImg-1);
+        StimTable.catName{iIn} = catName;
+        StimTable.imgName{iIn} = imgName;
+        StimTable.imgPath_Typical{iIn} = fullfile('.','Imgs','Typicals',...
+            [imgName,'.png']);
+        StimTable.imgPath_Oddball{iIn} = fullfile('.','Imgs','Oddballs',...
+            [imgName,'.png']);
     end
 end
 
-% Get the imgFns
-imgFn = dir('./Imgs/Typicals/*.png');
-imgFn = {imgFn.name}';
+StimTable.imgId = imgName2imgId(StimTable.imgName);
+StimTable.catId = imgId2catId(StimTable.imgId);
+StimTable.trigId_Typical = getTrigId(StimTable.imgId,0);
+StimTable.trigId_Oddball = getTrigId(StimTable.imgId,1);
 
-% Get the file paths
-path_typ = ...
-    fullfile('.',filesep,'Imgs',filesep,'Typicals',filesep,imgFn);
-path_odd = ...
-    fullfile('.',filesep,'Imgs',filesep,'Oddballs',filesep,imgFn);
-
-% Get the imgIds
-imgId = imgFn2imgId(imgFn);
-
-% Get the catIds
-catId = imgId2catId(imgId);
-
-% Get the trigger IDs
-trgId_typ = getTrigId(imgId,0);
-trgId_odd = getTrigId(imgId,1);
-
-% Create the unsorted stimList
-stimTable = table(imgId,catId,imgFn,path_typ,path_odd,trgId_typ,trgId_odd);
+% Create the unsorted StimTable
+StimTable = struct2table(StimTable);
 
 % Sort the rows of the table
-stimTable = stimTable(imgPerm,:);
+StimTable = StimTable(imgPerm,:);
+return
 
-% Add information from oddballDist
-oddDist = load('oddballDist.mat');
-oddDist = oddDist.oddballDist;
-oddPlace = cell(size(oddDist,1),1);
-for ii = 1:size(oddDist,1)
-    v = oddDist(ii,:)';
-    cIdx = find(v);
-    runIdx = floor((cIdx-1)/5) + 1;
-    repIdx = mod(cIdx-1,5) + 1;
-    % posIdx = (3+54+1).*mod(cIdx-1,5) + ii;
-    oddPlace{ii} = [runIdx,repIdx];
-end
-stimTable.oddPlace = oddPlace;
-
+function [fail] = testImgPerm(imgPerm)
+M = kron(eye(9),ones(1,6)./6);
+a = M*imgPerm;
+fail = sum((sort(a)-(3.5:6:51.5)').^2) > 1e-16;
 return

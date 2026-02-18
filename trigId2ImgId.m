@@ -1,4 +1,4 @@
-function [imgId,isTarget] = getImgId(trigId)
+function [imgId,isTarget] = trigId2ImgId(trigId)
 % Inverse of getTrigId: maps trigId -> imgId and isTarget
 
 % Check inputs

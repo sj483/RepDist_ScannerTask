@@ -1,4 +1,22 @@
-function [globals] = setGlobals(globals)
+function [globals] = setGlobals(subjectIdx,runIdx)
+
+%% Set the sujectIdx and the runIdx
+globals = struct;
+globals.subjectIdx = subjectIdx; % 1-ordered
+globals.runIdx = runIdx; % 1-ordered
+
+%% Set the OddBallDist
+globals.OddballDist = getOddballDist();
+
+%% Set the Countdown specs
+[CountDurs,ScrollStarts] = getCountSpecs();
+globals.countDur = CountDurs(:,runIdx);
+globals.scrollStart = ScrollStarts(:,runIdx);
+
+%% Set the StimTable
+ImgPerms = getImgPerms();
+imgPerm = ImgPerms(:,subjectIdx);
+globals.StimTable = getStimTable(imgPerm);
 
 %% Set the unit length of each IO pulse
 globals.portUnitLength = 8/1000;

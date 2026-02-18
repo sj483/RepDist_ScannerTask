@@ -7,6 +7,7 @@ if exist('ImgPerms.mat','file')
 end
 
 rng(196883);
+nImgs = 54;
 nSubjects = 40;
 
 % Image permulations (1-ordered, unique for each subject)

@@ -1,9 +1,9 @@
-function [imgId] = imgFn2imgId(imgFn)
+function [imgId] = imgName2imgId(imgName)
 
 % Check input and convert to cell if needed
-if ischar(imgFn)
-    imgFn = {imgFn};
-elseif ~iscell(imgFn)
+if ischar(imgName)
+    imgName = {imgName};
+elseif ~iscell(imgName)
     error('Input must be either a char or cell');
 end
 
@@ -21,10 +21,10 @@ catNames = {
     };
 
 % Get the category ID (0-ordered)
-catId = cellfun(@(s)find(contains(catNames,s(1:3))),imgFn) - 1;
+catId = cellfun(@(s)find(contains(catNames,s(1:3))),imgName) - 1;
 
 % Get the imgNum (0-ordered)
-imgNum = cellfun(@(s)str2double(s(4)),imgFn);
+imgNum = cellfun(@(s)str2double(s(4)),imgName);
 
 % Construct the imgId (0-ordered)
 imgId = 6.*catId + imgNum;
