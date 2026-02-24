@@ -17,7 +17,6 @@ while true
 
     % Check whether a the max time has been reached ...
     if t >= tTimeOut
-        keyTime = t;
         break
     end
 end

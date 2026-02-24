@@ -11,7 +11,8 @@ Screen('DrawTexture', ...
 Screen('Flip', globals.window, globals.t);
 
 % Wait for a response
-[keyIds,keyTime] = liKeyWait([globals.downKey;globals.upKey],duration);
+[keyIds,keyTime] = liKeyWait(...
+    [globals.downKey;globals.upKey], globals.t + duration);
 r = any(~isnan(keyIds));
 
 % Update globals.t so the texture is shown for the intended duration

@@ -7,6 +7,13 @@ if isempty(userInput)
 end 
 
 subjectIdx = str2double(userInput{1});
+ImgPerms = getImgPerms();
+if (subjectIdx < 1) || (subjectIdx > size(ImgPerms,2)) ||...
+        isnan(subjectIdx) || ...
+        (round(subjectIdx)~=subjectIdx)
+    error('subjectIdx must be a strictly positive integer < %i.',...
+        size(ImgPerms,2)+1);
+end
 
 % Confirm details
 ConfStr = sprintf(...

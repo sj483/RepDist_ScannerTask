@@ -1,4 +1,4 @@
-function [stoppedEarly] = runRun(subjectId,runId)
+function [stoppedEarly] = runRun(subjectIdx,runId)
 
 %% Clear the screen
 sca;
@@ -10,14 +10,18 @@ if ~exist(sprintf('.%sOutputs',filesep),'dir')
 end
 dateTimeStr = sprintf('%04d%02d%02dT%02d%02d%02d', ...
     round(clock)); %#ok<CLOCK>
-saveFn = sprintf('.%sOutputs%s%s_R%i_%s.mat',...
-    filesep, filesep, subjectId, runId, dateTimeStr);
+saveFn = sprintf('.%sOutputs%s%02d_R%i_%s.mat',...
+    filesep, filesep, subjectIdx, runId, dateTimeStr);
 
 %% Create the globals structure
-globals = setGlobals(subjectId,runId);
+globals = setGlobals(subjectIdx,runId);
 
 %% Set up IO port
 globals = setIOPort(globals);
+if globals.stoppedEarly
+    stoppedEarly = true;
+    return
+end
 
 %% Create TaskIO
 TaskIO = makeTaskIO(globals);
@@ -75,15 +79,13 @@ for iTIO = 1:size(TaskIO,1)
             TaskIO.tResponse(iTIO) = keyTime;
 
         otherwise
-            error('Unrecognised trial type in TaskIO at iTrial=%i',iTrial);
+            error('Unrecognised trial type in TaskIO at iTrial=%i',iTIO);
     end
 
-    % Escape
+    % Set stoppedEarly
     [~, ~, keyCode] = KbCheck(-3);
     if keyCode(globals.escapeKey)
         globals.stoppedEarly = true;
-        sca;
-        warning('Terminated by user.');
     end
 
     % Save the data
@@ -91,6 +93,15 @@ for iTIO = 1:size(TaskIO,1)
         save(saveFn, 'globals', 'TaskIO', 'tScan0');
     catch
         warning('Data not saved successfully on trial %i', iTIO);
+    end
+
+    % Escape
+    if globals.stoppedEarly
+        stoppedEarly = true;
+        sca;
+        warning('Terminated by user.');
+        Screen('CloseAll');
+        return
     end
 
 end

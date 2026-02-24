@@ -1,7 +1,8 @@
 function [globals] = showNum(countStart, duration, globals)
 
 % Draw the number sprite
-textureIdx = globals.textures.numbers(countStart);
+% Add one to the countStart when indexing (number: 0 -> index: 1).
+textureIdx = globals.textures.numbers(countStart+1);
 Screen('DrawTexture', ...
     globals.window, ...
     textureIdx, ...

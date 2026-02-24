@@ -3,20 +3,21 @@ function [r, tR, globals] = getCountResponse(scrollStart, globals)
 % Set the time out at 2 seconds
 tTimeOut = globals.t + 2;
 
-drawScroll(number, globals);
+drawScroll(scrollStart, globals);
 r = NaN;
 tR = NaN;
 now = GetSecs();
 tLastValidScroll = -Inf;
 currentNumber = scrollStart;
 while now < tTimeOut
-    [keyIds, keyTime] = liKeyWait(allowableKeys, tTimeOut);
+    [keyIds, keyTime] = liKeyWait(...
+        [globals.downKey,globals.upKey], tTimeOut);
     if keyTime > (tLastValidScroll + 0.25)
-        if ismember(globals.downKey,keyIds) && currentNumber > 0
+        if ismember(globals.downKey,keyIds) && currentNumber > 1
             currentNumber = currentNumber - 1;
             drawScroll(currentNumber, globals);
             tLastValidScroll = keyTime;
-        elseif ismember(globals.upKey,keyIds) && currentNumber < 99
+        elseif ismember(globals.upKey,keyIds) && currentNumber < 98
             currentNumber = currentNumber + 1;
             drawScroll(currentNumber, globals);
             tLastValidScroll = keyTime;
@@ -32,7 +33,7 @@ while now < tTimeOut
         % Buttons have not been pressed
         r = currentNumber*1i;
     end
-    
+
     % Set now
     now = GetSecs();
 end
@@ -43,16 +44,18 @@ return
 function [tDraw] = drawScroll(number, globals)
 
     % Draw the smaller number
+    % Add one to the number-1 when indexing (number: 0 -> index: 1).
     Screen('DrawTexture',...
         globals.window,...
-        globals.textures.numbers(number-1),...
+        globals.textures.numbers(number),...
         [],...
         globals.xyEdgesNumLeft);
 
     % Draw the central number & frame
+    % Add one to the number when indexing (number: 0 -> index: 1).
     Screen('DrawTexture',...
         globals.window,...
-        globals.textures.numbers(number),...
+        globals.textures.numbers(number+1),...
         [],...
         globals.xyEdgesNumMid);
     Screen('FrameRect',...
@@ -62,9 +65,10 @@ function [tDraw] = drawScroll(number, globals)
         globals.penWidthPixels);
 
     % Draw the larger number
+    % Add one to the number+1 when indexing (number: 0 -> index: 1).
     Screen('DrawTexture',...
         globals.window,...
-        globals.textures.numbers(number+1),...
+        globals.textures.numbers(number+2),...
         [],...
         globals.xyEdgesNumRight);
 
