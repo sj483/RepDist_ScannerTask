@@ -8,26 +8,35 @@ axis([0 200 0 200]);
 
 % Set the aspect ratio to ensure equal lengths
 pbaspect([1 1 1]);
-set(gca, 'Color', [0.5,0.5,0.5]); % Set background to black
-set(gca, 'XColor', 'none', 'YColor', 'none'); % Remove axis lines
+
+% Set background
+set(gca, 'Color', [0.5,0.5,0.5]);
+
+% Remove axis lines
+set(gca, 'XColor', 'none', 'YColor', 'none');
 
 % Expand axis to fill figure
 set(gca, 'Position', [0 0 1 1]);
 
 % Set figure size to be square
 fh.Units = 'pixels';
-fh.Position(3:4) = [200 200]; % Make it nicely square (larger than 830 to allow room)
-
+fh.Position(3:4) = [200 200];
 fh.Units = 'inches';
-fh.Position = [0 0 2 2];  % 2 in × 2 in
+fh.Position = [0 0 2 2];  % 2 inches * 2 inches
 fh.PaperUnits = 'inches';
 fh.PaperPosition = [0 0 2 2];
+
 % Set paper mode to auto so it saves as it appears
 fh.PaperPositionMode = 'auto';
 fh.InvertHardcopy = 'off';
 
+text(100, 100, '$\leftarrow$',...
+    'Interpreter','latex',...
+    'Color', 'w',...
+    'FontSize', 100,...
+    'HorizontalAlignment', 'center',...
+    'VerticalAlignment', 'middle');
+print(fh, 'Arrow.png', '-dpng', '-r100');  % Save as PNG at 100 DPI
 
-text(100, 100, '$\downarrow$','Interpreter','latex', 'Color', 'w', 'FontSize', 100, 'HorizontalAlignment', 'center', 'VerticalAlignment', 'middle');
-print(fh, 'arrow.png', '-dpng', '-r100');  % Save as PNG at 300 DPI
-
+close all;
 return
