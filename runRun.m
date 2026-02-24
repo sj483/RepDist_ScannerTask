@@ -25,74 +25,74 @@ TaskIO = makeTaskIO(globals);
 %% Wait for Scanner
 [tScan0,globals] = waitForScanner(globals);
 
-%TRIAL LOOP
-for trial = 1:numel(taskIO)
-    if strcmp(taskIO(trial).type,"countingTrial")
+%% Trial loop
+for iTIO = 1:size(TaskIO,1)
 
-        %Display the number from which to count down from
-        startNum = taskIO(trial).startNum;
-        globals = showNum(startNum, 1, globals);
-        taskIO(trial).tShow = globals.t;
-        %Display arrow for duration of counting period
-        durArrow = taskIO(trial).isiLength;
-        globals = showArrow(durArrow,globals);
-        taskIO(trial).tShow = globals.t;
-        %options is a mini struct of stuff needed for the counting
-        %response page
-        options.scrlStart = taskIO(trial).scrlStart;
-        options.dur = 2; % response time always 2 seconds
+    switch TaskIO.trialType{iTIO}
+        case 'Null'
+            % Set tShow
+            TaskIO.tShow(iTIO) = globals.t;
 
-        %Display scrolling answer page
-        [r, globals] = showScroll(options,globals);
-        taskIO(trial).response = r;
-    elseif strcmp(taskIO(trial).type,"null")
-        %Display Null trial (blank screen for 2.5 seconds)
-        globals = showBlank(2.5, globals);
-        taskIO(trial).tShow = globals.t;
-    else %this is both target/non target trials
-        %Display ISI
-        globals = showBlank(0.5, globals);
-        % globals.t is the time at which the last screen finished showing
-        % i.e time which new screen should start
-        taskIO(trial).tShow = globals.t;
+            % Draw a blank to the screen for 2.5 seconds
+            globals = showBlank(2.5, globals);
 
-        %Set trial charecteristics
-        %imgDur = 2; unless you're testing...
-        imgTexture = taskIO(trial).textureId;
-        trigId = taskIO(trial).trigId;
-        %Display image stimulus
-        [r,globals] = showImg(imgTexture,imgDur,globals);
-        liSendTrig(trigId + 8,globals);
-        taskIO(trial).response = r;
-        taskIO(trial).respT = globals.respT;
-        if strcmp(taskIO(trial).type, 'oddBall')
-            % Oddball trial
-            if isnan(r)
-                taskIO(trial).correctResp = 0;
-            else
-                taskIO(trial).correctResp = 1;
-            end
-        else
-            % Non-oddball trial
-            if ~isnan(r)
-                taskIO(trial).correctResp = 0;
-            end
-            % Otherwise leave it as NaN (default)
-        end
+        case 'CountDown'
+            % Set tShow and send trigger
+            TaskIO.tShow(iTIO) = globals.t;
+            liSendTrig(TaskIO.trigId(iTIO),globals);
+
+            % Extract the count-down specs
+            countSpec = TaskIO.stimulus{iTIO};
+
+            % Show the starting number for 1 second
+            globals = showNum(countSpec.countStart, 1, globals);
+
+            % Show the arrow for a variable number of seconds
+            globals = showArrow(countSpec.countDur, globals);
+
+            % Request a response, 2 second response window
+            [response, tResponse, globals] = getCountResponse(...
+                countSpec.scrollStart, globals);
+
+            % Record the response and it's time
+            TaskIO.response(iTIO) = response;
+            TaskIO.tResponse(iTIO) = tResponse;
+
+        case {'Typical','Oddball'}
+            % Show a black for 0.5 seconds
+            globals = showBlank(0.5, globals);
+
+            % Set tShow and send trigger
+            TaskIO.tShow(iTIO) = globals.t;
+            liSendTrig(TaskIO.trigId(iTIO),globals);
+
+            % Draw the image and wait 2 seconds while accepting responses
+            [response, keyTime, globals] = ...
+                showImg(TaskIO.textureIdx(iTIO), 2, globals);
+
+            % Record the response and it's time
+            TaskIO.response(iTIO) = response;
+            TaskIO.tResponse(iTIO) = keyTime;
+
+        otherwise
+            error('Unrecognised trial type in TaskIO at iTrial=%i',iTrial);
     end
 
-    try
-        save(saveFn, "taskIO", "tScan0", "globals");
-    catch
-        warning('Data not saved successfully on trial %i', trial);
-    end
-
-    %% Escape
+    % Escape
     [~, ~, keyCode] = KbCheck(-3);
     if keyCode(globals.escapeKey)
+        globals.stoppedEarly = true;
         sca;
-        error('Terminated by user.');
+        warning('Terminated by user.');
     end
+
+    % Save the data
+    try
+        save(saveFn, 'globals', 'TaskIO', 'tScan0');
+    catch
+        warning('Data not saved successfully on trial %i', iTIO);
+    end
+
 end
 Screen('CloseAll');
 

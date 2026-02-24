@@ -1,10 +1,12 @@
-function [globals] = showNum(startNum, duration, globals)
+function [globals] = showNum(countStart, duration, globals)
 
-%extract correct texture for relevant number 
-texture = globals.numTextures(startNum);
-
-
-Screen('DrawTexture', globals.window, texture, [], globals.xyEdgesNumAr);
+% Draw the number sprite
+textureIdx = globals.textures.numbers(countStart);
+Screen('DrawTexture', ...
+    globals.window, ...
+    textureIdx, ...
+    [], ...
+    globals.xyEdgesNumMid);
 
 % Flip the screen
 Screen('Flip', globals.window, globals.t);
