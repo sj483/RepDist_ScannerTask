@@ -16,6 +16,9 @@ saveFn = sprintf('.%sOutputs%s%02d_R%i_%s.mat',...
 %% Create the globals structure
 globals = setGlobals(subjectIdx,runId);
 
+%% Set-up PsychToolbox
+setUp(globals.window);
+
 %% Set up IO port
 globals = setIOPort(globals);
 if globals.stoppedEarly

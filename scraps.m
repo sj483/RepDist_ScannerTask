@@ -1,1 +1,0 @@
-setUp(window)
