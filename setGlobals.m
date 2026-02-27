@@ -34,11 +34,11 @@ globals.sKey = KbName('s');
 %% Set monoschrome values
 [globals.white, globals.grey, globals.black] = setMonochromes();
 
-%% Pen drawing options
+%% Drawing options
 globals.penWidthPixels = 6;
-globals.stimWidth = 830 -1;
-globals.numMidWidth = 200 -1;
+globals.stimWidth = 630;
+globals.numMidWidth = 200;
 globals.frameMarginNumMid = [-20,-20,+20,+20];
-globals.numFlankWidth = 150 -1;
+globals.numFlankWidth = 150;
 globals.numFlankOffset = 300;
 return

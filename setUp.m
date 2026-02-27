@@ -25,6 +25,10 @@ for iStim = 1:size(globals.StimTable,1)
     % Typicals
     fn = globals.StimTable.imgPath_Typical{iStim};
     [Img,~,Alpha] = imread(fn);
+    Img = imresize(Img,[globals.stimWidth,globals.stimWidth],...
+        'Method','bicubic','Antialiasing',true);
+    Alpha = imresize(Alpha,[globals.stimWidth,globals.stimWidth],...
+        'Method','bicubic','Antialiasing',true);
     Img = cat(3, Img, Alpha);
     globals.StimTable.textureIdx_Typical(iStim) = Screen('MakeTexture', ...
         globals.window, Img);
@@ -32,6 +36,10 @@ for iStim = 1:size(globals.StimTable,1)
     % Oddballs
     fn = globals.StimTable.imgPath_Oddball{iStim};
     [Img,~,Alpha] = imread(fn);
+    Img = imresize(Img,[globals.stimWidth,globals.stimWidth],...
+        'Method','bicubic','Antialiasing',true);
+    Alpha = imresize(Alpha,[globals.stimWidth,globals.stimWidth],...
+        'Method','bicubic','Antialiasing',true);
     Img = cat(3, Img, Alpha);
     globals.StimTable.textureIdx_Oddball(iStim) = Screen('MakeTexture', ...
         globals.window, Img);
