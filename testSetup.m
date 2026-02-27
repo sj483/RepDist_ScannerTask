@@ -17,15 +17,21 @@ penWidthPixels = 6;
 allowableKeys = [globals.downKey, globals.upKey];
 
 %% Draw the rect to the screen
-Screen('FrameRect', globals.window, [0,0,1].*globals.white, globals.xyEdgesScrn, penWidthPixels)
-Screen('FrameRect', globals.window, [0,0,1].*globals.white, globals.xyEdgesStim, penWidthPixels)
-Screen('FrameRect', globals.window, [0,0,1].*globals.white, globals.xyEdgesFrameMid, penWidthPixels)
-Screen('FrameRect', globals.window, [0,1,0].*globals.white, globals.xyEdgesNumRight, penWidthPixels)
-Screen('FrameRect', globals.window, [1,0,0].*globals.white, globals.xyEdgesNumLeft, penWidthPixels)
+Screen('FrameRect', globals.window, [0,0,1].*globals.white, ...
+    globals.xyEdgesScrn, penWidthPixels);
+Screen('FrameRect', globals.window, [0,0,1].*globals.white, ...
+    globals.xyEdgesStim, penWidthPixels);
+Screen('FrameRect', globals.window, [0,0,1].*globals.white, ...
+    globals.xyEdgesFrameMid, penWidthPixels);
+Screen('FrameRect', globals.window, [0,1,0].*globals.white, ...
+    globals.xyEdgesNumRight, penWidthPixels);
+Screen('FrameRect', globals.window, [1,0,0].*globals.white, ...
+    globals.xyEdgesNumLeft, penWidthPixels);
 
 %% Flip to the screen
 Screen('Flip', globals.window);
 
+%% Wait for screen
 kbIds = liKeyWait(allowableKeys,Inf);
 keyNames = KbName(kbIds);
 disp(keyNames);
@@ -34,5 +40,5 @@ KbStrokeWait;
 
 %% Clear the screen
 sca;
-
+Screen('CloseAll');
 return
