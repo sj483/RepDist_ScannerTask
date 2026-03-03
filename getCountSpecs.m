@@ -13,7 +13,7 @@ nRepsPerRun = 5;
 SlotPerms = getSlotPerms();
 countStats = reshape(-SlotPerms(SlotPerms<0),4,4);
 
-% Dimention of stats
+% Dimension of stats
 d = [nRepsPerRun-1,nRuns];
 
 % Count durations (in seconds)

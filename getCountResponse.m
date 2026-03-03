@@ -1,7 +1,8 @@
-function [r, tR, globals] = getCountResponse(scrollStart, globals)
+function [r, tR, globals] = getCountResponse(...
+    scrollStart, durResponse, globals)
 
-% Set the time out at 2 seconds
-tTimeOut = globals.t + 2;
+% Set the time out
+tTimeOut = globals.t + durResponse;
 
 drawScroll(scrollStart, globals);
 r = NaN;

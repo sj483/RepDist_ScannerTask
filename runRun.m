@@ -59,7 +59,9 @@ for iTIO = 1:size(TaskIO,1)
 
             % Request a response, 2 second response window
             [response, tResponse, globals] = getCountResponse(...
-                countSpec.scrollStart, globals);
+                countSpec.scrollStart, ...
+                11 - (1+countSpec.countDur), ... 11 seconds per CountDown
+                globals);
 
             % Record the response and it's time
             TaskIO.response(iTIO) = response;
