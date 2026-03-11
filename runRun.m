@@ -44,9 +44,8 @@ for iTIO = 1:size(TaskIO,1)
             globals = showBlank(2.5, globals);
 
         case 'CountDown'
-            % Set tShow and send trigger
+            % Set tShow
             TaskIO.tShow(iTIO) = globals.t;
-            liSendTrig(TaskIO.trigId(iTIO),globals);
 
             % Extract the count-down specs
             countSpec = TaskIO.stimulus{iTIO};
@@ -71,9 +70,8 @@ for iTIO = 1:size(TaskIO,1)
             % Show a black for 0.5 seconds
             globals = showBlank(0.5, globals);
 
-            % Set tShow and send trigger
+            % Set tShow
             TaskIO.tShow(iTIO) = globals.t;
-            liSendTrig(TaskIO.trigId(iTIO),globals);
 
             % Draw the image and wait 2 seconds while accepting responses
             [response, keyTime, globals] = ...

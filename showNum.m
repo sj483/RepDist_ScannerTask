@@ -12,6 +12,9 @@ Screen('DrawTexture', ...
 % Flip the screen
 Screen('Flip', globals.window, globals.t);
 
+% Send the trigger 
+liSendTrig(2,globals);
+
 % Update globals.t so the blank screen is shown for the intended duration
 waitframes = round(duration / globals.ifi);
 globals.t = globals.t + (waitframes * globals.ifi);

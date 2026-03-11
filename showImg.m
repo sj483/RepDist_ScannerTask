@@ -10,6 +10,9 @@ Screen('DrawTexture', ...
 % Flip the screen
 Screen('Flip', globals.window, globals.t);
 
+% Send the trigger
+liSendTrig(1,globals);
+
 % Wait for a response
 [keyIds,keyTime] = liKeyWait(...
     [globals.downKey;globals.upKey], globals.t + duration);
